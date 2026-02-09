@@ -1,0 +1,32 @@
+{
+  "name": "wallpaper-api",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev",
+    "start": "wrangler dev",
+    "cf-typegen": "wrangler types",
+
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "lint:unsafe": "biome check --write --unsafe .",
+
+    "fmt": "biome format .",
+    "fmt:fix": "biome format --write .",
+
+    "ci": "biome ci .",
+
+    "postinstall": "npm run cf-typegen && git config core.hooksPath .githooks"
+  },
+  "dependencies": {
+    "hono": "^4.11.9",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.3.14",
+    "@types/node": "^24.10.12",
+    "@types/service-worker-mock": "^2.0.4",
+    "wrangler": "^4.63.0"
+  }
+}
