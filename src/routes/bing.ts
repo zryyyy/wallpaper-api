@@ -21,7 +21,9 @@ bingRoute.get('/pic', vValidator('query', querySchema), async (c) => {
   const { mkt, idx } = c.req.valid('query');
 
   const data = await getBingWallpapers({ mkt, idx });
-
+  if (data.length === 0) {
+    return c.text('No wallpaper found', 404);
+  }
   return c.redirect(data[0].url, 302);
 });
 

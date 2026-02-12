@@ -45,12 +45,14 @@ export type UnsplashQueryParams = InferOutput<typeof querySchema>;
 const unsplashRoute = new Hono<{ Bindings: Env }>();
 
 unsplashRoute.get('/', vValidator('query', querySchema), async (c) => {
-  return c.json(await getUnsplashWallpapers(c.env.UNSPLASH_ACCESS_KEY, c.req.valid('query')));
+  return c.json(await getUnsplashWallpapers(c.req.valid('query'), c.env.UNSPLASH_ACCESS_KEY));
 });
 
 unsplashRoute.get('/pic', vValidator('query', querySchema), async (c) => {
-  const data = await getUnsplashWallpapers(c.env.UNSPLASH_ACCESS_KEY, c.req.valid('query'));
-
+  const data = await getUnsplashWallpapers(c.req.valid('query'), c.env.UNSPLASH_ACCESS_KEY);
+  if (data.length === 0) {
+    return c.text('No wallpaper found', 404);
+  }
   return c.redirect(data[0].url, 302);
 });
 

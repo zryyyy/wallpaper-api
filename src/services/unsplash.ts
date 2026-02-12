@@ -1,7 +1,7 @@
 import type { UnsplashQueryParams } from '../routes/unsplash';
 import { fetchJson } from '../utils/client';
 
-const UNSPLASH_API_URL = `https://api.unsplash.com`;
+const UNSPLASH_API_URL = 'https://api.unsplash.com/';
 
 interface UnsplashImageRaw {
   id: string;
@@ -45,7 +45,7 @@ interface UnsplashWallpaper {
   download: string;
 }
 
-export async function getUnsplashWallpapers(apiKey: string, params: UnsplashQueryParams): Promise<UnsplashWallpaper[]> {
+export async function getUnsplashWallpapers(params: UnsplashQueryParams, apiKey: string): Promise<UnsplashWallpaper[]> {
   if (!apiKey) throw new Error('Unsplash Access Key is missing');
   const headers = {
     Authorization: `Client-ID ${apiKey}`,
@@ -76,7 +76,7 @@ async function fetchRandomPhotos(
   params: Extract<UnsplashQueryParams, { mode: 'random' }>,
   headers: HeadersInit,
 ): Promise<UnsplashWallpaper[]> {
-  const url = new URL('/photos/random', UNSPLASH_API_URL);
+  const url = new URL('photos/random', UNSPLASH_API_URL);
 
   url.searchParams.set('count', params.n.toString());
   params.collections && url.searchParams.set('collections', params.collections);
@@ -94,7 +94,7 @@ async function fetchSearchPhotos(
   params: Extract<UnsplashQueryParams, { mode: 'search' }>,
   headers: HeadersInit,
 ): Promise<UnsplashWallpaper[]> {
-  const url = new URL('/search/photos', UNSPLASH_API_URL);
+  const url = new URL('search/photos', UNSPLASH_API_URL);
 
   url.searchParams.set('query', params.query);
   url.searchParams.set('per_page', params.n.toString());
@@ -109,7 +109,7 @@ async function fetchSearchPhotos(
 }
 
 async function fetchListPhotos(params: Extract<UnsplashQueryParams, { mode: 'list' }>, headers: HeadersInit): Promise<UnsplashWallpaper[]> {
-  const url = new URL('/photos', UNSPLASH_API_URL);
+  const url = new URL('photos', UNSPLASH_API_URL);
 
   url.searchParams.set('per_page', params.n.toString());
   url.searchParams.set('page', params.page.toString());
