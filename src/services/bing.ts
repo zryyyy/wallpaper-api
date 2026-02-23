@@ -24,7 +24,11 @@ interface BingWallpaper {
   drk: 0 | 1;
 }
 
-export async function getBingWallpapers(params: { idx: number; n?: number; mkt?: string }): Promise<BingWallpaper[]> {
+export async function getBingWallpapers(params: {
+  idx: number;
+  n?: number;
+  mkt?: string;
+}): Promise<BingWallpaper[]> {
   const url = new URL(BING_API_URL);
   url.searchParams.set('format', 'js');
   url.searchParams.set('idx', params.idx.toString());

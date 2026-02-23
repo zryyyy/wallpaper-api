@@ -30,7 +30,10 @@ const mapRaw = (img: PexelsImageRaw): PexelsWallpaper => ({
   title: img.alt,
 });
 
-export async function getPexelsWallpapers(params: PexelsQueryParams, apiKey: string): Promise<PexelsWallpaper[]> {
+export async function getPexelsWallpapers(
+  params: PexelsQueryParams,
+  apiKey: string,
+): Promise<PexelsWallpaper[]> {
   if (!apiKey) throw new Error('Pexels Api Key is missing');
   const headers = {
     Authorization: apiKey,
@@ -60,7 +63,15 @@ export async function getPexelsWallpapers(params: PexelsQueryParams, apiKey: str
 }
 
 async function fetchSearchPhotos(
-  params: { query: string; orientation?: string; size?: string; color?: string; locale?: string; page?: number; per_page?: number },
+  params: {
+    query: string;
+    orientation?: string;
+    size?: string;
+    color?: string;
+    locale?: string;
+    page?: number;
+    per_page?: number;
+  },
   headers: HeadersInit,
 ): Promise<PexelsWallpaper[]> {
   const url = new URL('search', PEXELS_API_URL);
@@ -77,7 +88,10 @@ async function fetchSearchPhotos(
   return data.photos.map<PexelsWallpaper>(mapRaw);
 }
 
-async function fetchCuratedPhotos(params: { page?: number; per_page?: number }, headers: HeadersInit): Promise<PexelsWallpaper[]> {
+async function fetchCuratedPhotos(
+  params: { page?: number; per_page?: number },
+  headers: HeadersInit,
+): Promise<PexelsWallpaper[]> {
   const url = new URL('curated', PEXELS_API_URL);
 
   params.page && url.searchParams.set('page', params.page.toString());

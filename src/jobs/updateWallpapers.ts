@@ -10,7 +10,10 @@ interface Wallpaper {
   source: string;
 }
 
-async function fetchAndMapWallpapers(source: string, fetcher: () => Promise<Omit<Wallpaper, 'source'>[]>): Promise<Wallpaper[]> {
+async function fetchAndMapWallpapers(
+  source: string,
+  fetcher: () => Promise<Omit<Wallpaper, 'source'>[]>,
+): Promise<Wallpaper[]> {
   try {
     const rawWallpapers = await fetcher();
     console.log(`[${source}] Successfully fetched ${rawWallpapers.length} wallpapers.`);
@@ -27,23 +30,40 @@ async function fetchAndMapWallpapers(source: string, fetcher: () => Promise<Omit
   }
 }
 
-export default async function updateWallpapers(_controller: ScheduledController, env: Env, _ctx: ExecutionContext) {
+export default async function updateWallpapers(
+  _controller: ScheduledController,
+  env: Env,
+  _ctx: ExecutionContext,
+) {
   try {
     const fetchTasks: Promise<Wallpaper[]>[] = [
       fetchAndMapWallpapers('bing', async () => {
-        const [bing1, bing2] = await Promise.all([getBingWallpapers({ idx: 0, n: 7 }), getBingWallpapers({ idx: 8, n: 8 })]);
+        const [bing1, bing2] = await Promise.all([
+          getBingWallpapers({ idx: 0, n: 7 }),
+          getBingWallpapers({ idx: 8, n: 8 }),
+        ]);
         return [...bing1, ...bing2];
       }),
 
-      fetchAndMapWallpapers('wallhaven', () => getWallhavenWallpapers({ sorting: 'random', purity: '100', atleast: '2560x1440' })),
+      fetchAndMapWallpapers('wallhaven', () =>
+        getWallhavenWallpapers({ sorting: 'random', purity: '100', atleast: '2560x1440' }),
+      ),
     ];
 
     if (env.UNSPLASH_ACCESS_KEY) {
-      fetchTasks.push(fetchAndMapWallpapers('unsplash', () => getUnsplashWallpapers({ mode: 'random', n: 15 }, env.UNSPLASH_ACCESS_KEY)));
+      fetchTasks.push(
+        fetchAndMapWallpapers('unsplash', () =>
+          getUnsplashWallpapers({ mode: 'random', n: 15 }, env.UNSPLASH_ACCESS_KEY),
+        ),
+      );
     }
 
     if (env.PEXELS_API_KEY) {
-      fetchTasks.push(fetchAndMapWallpapers('pexels', () => getPexelsWallpapers({ mode: 'curated' }, env.PEXELS_API_KEY)));
+      fetchTasks.push(
+        fetchAndMapWallpapers('pexels', () =>
+          getPexelsWallpapers({ mode: 'curated' }, env.PEXELS_API_KEY),
+        ),
+      );
     }
 
     const results = await Promise.all(fetchTasks);

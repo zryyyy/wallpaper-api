@@ -1,11 +1,15 @@
 import { vValidator } from '@hono/valibot-validator';
 import { Hono } from 'hono';
-import { integer, maxValue, minValue, number, object, optional, pipe, regex, string, transform, unknown } from 'valibot';
+// biome-ignore format: readability
+import { integer, maxValue, minValue, number, object, optional, pipe, regex, string, transform, unknown, } from 'valibot';
 import { getBingWallpapers } from '../services/bing';
 
 const querySchema = object({
   mkt: optional(pipe(string(), regex(/^[a-z]{2}-[A-Z]{2}$/))),
-  idx: optional(pipe(unknown(), transform(Number), number(), integer(), minValue(0), maxValue(7)), 0),
+  idx: optional(
+    pipe(unknown(), transform(Number), number(), integer(), minValue(0), maxValue(7)),
+    0,
+  ),
   n: optional(pipe(unknown(), transform(Number), number(), integer(), minValue(1), maxValue(8)), 1),
 });
 

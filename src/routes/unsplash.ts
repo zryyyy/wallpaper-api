@@ -5,7 +5,10 @@ import { check, type InferOutput, integer, literal, maxValue, minValue, nonEmpty
 import { getUnsplashWallpapers } from '../services/unsplash';
 
 const toInt = (min: number, max: number, fallback?: number) =>
-  optional(pipe(unknown(), transform(Number), number(), integer(), minValue(min), maxValue(max)), fallback);
+  optional(
+    pipe(unknown(), transform(Number), number(), integer(), minValue(min), maxValue(max)),
+    fallback,
+  );
 
 const randomQuerySchema = pipe(
   object({
@@ -28,6 +31,7 @@ const searchQuerySchema = object({
   page: toInt(1, 100, 1),
   order_by: optional(picklist(['relevant', 'latest'])),
   orientation: optional(picklist(['landscape', 'portrait', 'squarish'])),
+  // biome-ignore format: readability
   color: optional(picklist(['black_and_white', 'black', 'white', 'yellow', 'orange', 'red', 'purple', 'magenta', 'green', 'teal', 'blue'])),
   content_filter: optional(picklist(['low', 'high'])),
 });

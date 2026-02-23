@@ -19,7 +19,10 @@ interface WallhavenWallpaper {
   title: string;
 }
 
-export async function getWallhavenWallpapers(params: WallhavenQueryParams, apiKey?: string): Promise<WallhavenWallpaper[]> {
+export async function getWallhavenWallpapers(
+  params: WallhavenQueryParams,
+  apiKey?: string,
+): Promise<WallhavenWallpaper[]> {
   const url = new URL('search', WALLHAVEN_API_URL);
   // check NSFW bit
   if (params.purity?.[2] === '1') {
@@ -38,7 +41,10 @@ export async function getWallhavenWallpapers(params: WallhavenQueryParams, apiKe
   params.colors && url.searchParams.set('colors', params.colors);
   params.page && url.searchParams.set('page', params.page.toString());
   params.seed && url.searchParams.set('seed', params.seed);
-  if (params.sorting === 'toplist' && params.topRange) url.searchParams.set('topRange', params.topRange);
+
+  if (params.sorting === 'toplist' && params.topRange) {
+    url.searchParams.set('topRange', params.topRange);
+  }
 
   const data = await fetchJson<WallhavenResponse>(url.toString());
 

@@ -45,7 +45,10 @@ interface UnsplashWallpaper {
   download: string;
 }
 
-export async function getUnsplashWallpapers(params: UnsplashQueryParams, apiKey: string): Promise<UnsplashWallpaper[]> {
+export async function getUnsplashWallpapers(
+  params: UnsplashQueryParams,
+  apiKey: string,
+): Promise<UnsplashWallpaper[]> {
   if (!apiKey) throw new Error('Unsplash Access Key is missing');
   const headers = {
     Authorization: `Client-ID ${apiKey}`,
@@ -108,7 +111,10 @@ async function fetchSearchPhotos(
   return data.results.map<UnsplashWallpaper>(mapRaw);
 }
 
-async function fetchListPhotos(params: Extract<UnsplashQueryParams, { mode: 'list' }>, headers: HeadersInit): Promise<UnsplashWallpaper[]> {
+async function fetchListPhotos(
+  params: Extract<UnsplashQueryParams, { mode: 'list' }>,
+  headers: HeadersInit,
+): Promise<UnsplashWallpaper[]> {
   const url = new URL('photos', UNSPLASH_API_URL);
 
   url.searchParams.set('per_page', params.n.toString());
