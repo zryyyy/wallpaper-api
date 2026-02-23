@@ -19,7 +19,7 @@ interface WallhavenWallpaper {
   title: string;
 }
 
-export async function getWallhavenWallpapers(params: WallhavenQueryParams, apiKey: string): Promise<WallhavenWallpaper[]> {
+export async function getWallhavenWallpapers(params: WallhavenQueryParams, apiKey?: string): Promise<WallhavenWallpaper[]> {
   const url = new URL('search', WALLHAVEN_API_URL);
   // check NSFW bit
   if (params.purity?.[2] === '1') {
