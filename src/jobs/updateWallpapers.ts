@@ -2,6 +2,7 @@ import { getBingWallpapers } from '../services/bing';
 import { getPexelsWallpapers } from '../services/pexels';
 import { getUnsplashWallpapers } from '../services/unsplash';
 import { getWallhavenWallpapers } from '../services/wallhaven';
+import { shuffleArray } from '../utils/shuffle';
 
 export interface Wallpaper {
   url: string;
@@ -71,10 +72,7 @@ export default async function updateWallpapers(
     const wallpapers = results.flat();
 
     if (wallpapers.length > 0) {
-      await env.WALLPAPER_KV.put(
-        'DAILY_WALLPAPERS',
-        JSON.stringify(wallpapers.sort(() => Math.random() - 0.5)),
-      );
+      await env.WALLPAPER_KV.put('DAILY_WALLPAPERS', JSON.stringify(shuffleArray(wallpapers)));
       console.log(`✅ Successfully stored a total of ${wallpapers.length} wallpapers.`);
     } else {
       console.warn('⚠️ No wallpapers were fetched from any source.');

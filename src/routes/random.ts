@@ -6,7 +6,7 @@ import { getRandomWallpapers } from '../services/random';
 
 const querySchema = object({
   n: fallback(
-    pipe(unknown(), transform(Number), number(), integer(), minValue(0), maxValue(60)),
+    pipe(unknown(), transform(Number), number(), integer(), minValue(1), maxValue(60)),
     1,
   ),
 });

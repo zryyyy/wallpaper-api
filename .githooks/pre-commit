@@ -20,4 +20,14 @@ fi
 echo "$STAGED_FILES" | xargs git add
 
 echo "✅ Biome check passed!"
+
+echo "🔍 TypeScript: Checking types..."
+npm run typecheck
+
+EXIT_CODE=$?
+if [ $EXIT_CODE -ne 0 ]; then
+    echo "❌ TypeScript type check failed. Please fix the errors."
+    exit $EXIT_CODE
+fi
+
 exit 0

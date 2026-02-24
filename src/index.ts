@@ -10,9 +10,20 @@ import unsplashRoute from './routes/unsplash';
 import wallhavenRoute from './routes/wallhaven';
 
 // Start a Hono app
-const app = new Hono();
+const app = new Hono<{ Bindings: Env }>();
 
 app.use(cors());
+
+app.onError((err, c) => {
+  console.error('[Error]', err);
+  return c.json(
+    {
+      success: false,
+      error: err.message || 'Internal Server Error',
+    },
+    500,
+  );
+});
 
 app.get('/', (c) => c.text('Wallpaper API is running'));
 

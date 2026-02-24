@@ -7,16 +7,13 @@
     "dev": "wrangler dev",
     "start": "wrangler dev",
     "cf-typegen": "wrangler types",
-
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "lint:unsafe": "biome check --write --unsafe .",
-
     "fmt": "biome format .",
     "fmt:fix": "biome format --write .",
-
-    "ci": "biome ci .",
-
+    "typecheck": "tsc --noEmit",
+    "ci": "biome ci . && npm run typecheck",
     "postinstall": "npm run cf-typegen && git config core.hooksPath .githooks"
   },
   "dependencies": {
@@ -28,6 +25,7 @@
     "@biomejs/biome": "^2.4.4",
     "@types/node": "^25.3.0",
     "@types/service-worker-mock": "^2.0.4",
-    "wrangler": "^4.68.0"
+    "typescript": "^5.9.3",
+    "wrangler": "^4.68.1"
   }
 }

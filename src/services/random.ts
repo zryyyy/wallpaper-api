@@ -1,4 +1,5 @@
 import type { Wallpaper } from '../jobs/updateWallpapers';
+import { shuffleArray } from '../utils/shuffle';
 
 export async function getRandomWallpapers(kv: KVNamespace, n: number = 1): Promise<Wallpaper[]> {
   const wallpapers = await kv.get<Wallpaper[]>('DAILY_WALLPAPERS', 'json');
@@ -11,6 +12,6 @@ export async function getRandomWallpapers(kv: KVNamespace, n: number = 1): Promi
     return [randomImage];
   }
 
-  const shuffled = [...wallpapers].sort(() => Math.random() - 0.5);
+  const shuffled = shuffleArray(wallpapers);
   return shuffled.slice(0, n);
 }
