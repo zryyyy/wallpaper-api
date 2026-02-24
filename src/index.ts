@@ -5,6 +5,7 @@ import updateWallpapers from './jobs/updateWallpapers';
 
 import bingRoute from './routes/bing';
 import pexelsRoute from './routes/pexels';
+import randomRoute from './routes/random';
 import unsplashRoute from './routes/unsplash';
 import wallhavenRoute from './routes/wallhaven';
 
@@ -19,6 +20,7 @@ app.route('/bing', bingRoute);
 app.route('/unsplash', unsplashRoute);
 app.route('/wallhaven', wallhavenRoute);
 app.route('/pexels', pexelsRoute);
+app.route('/random', randomRoute);
 
 export default {
   fetch: app.fetch,

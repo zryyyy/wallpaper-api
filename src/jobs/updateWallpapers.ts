@@ -3,7 +3,7 @@ import { getPexelsWallpapers } from '../services/pexels';
 import { getUnsplashWallpapers } from '../services/unsplash';
 import { getWallhavenWallpapers } from '../services/wallhaven';
 
-interface Wallpaper {
+export interface Wallpaper {
   url: string;
   copyright: string;
   title: string;
@@ -71,7 +71,10 @@ export default async function updateWallpapers(
     const wallpapers = results.flat();
 
     if (wallpapers.length > 0) {
-      await env.WALLPAPER_KV.put('DAILY_WALLPAPERS', JSON.stringify(wallpapers));
+      await env.WALLPAPER_KV.put(
+        'DAILY_WALLPAPERS',
+        JSON.stringify(wallpapers.sort(() => Math.random() - 0.5)),
+      );
       console.log(`✅ Successfully stored a total of ${wallpapers.length} wallpapers.`);
     } else {
       console.warn('⚠️ No wallpapers were fetched from any source.');
