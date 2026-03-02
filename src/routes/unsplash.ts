@@ -1,7 +1,7 @@
 import { vValidator } from '@hono/valibot-validator';
 import { Hono } from 'hono';
 // biome-ignore format: readability
-import { check, type InferOutput, integer, literal, maxValue, minValue, nonEmpty, number, object, optional, picklist, pipe, string, transform, unknown, variant } from 'valibot';
+import { check, type InferOutput, integer, literal, maxValue, minValue, nonEmpty, number, object, optional, picklist, pipe, string, transform, trim, unknown, variant } from 'valibot';
 import { getUnsplashWallpapers } from '../services/unsplash';
 
 const toInt = (min: number, max: number, fallback?: number) =>
@@ -15,7 +15,7 @@ const randomQuerySchema = pipe(
     mode: literal('random'),
     n: toInt(1, 30, 1), // count
     collections: optional(pipe(string(), nonEmpty())),
-    topics: optional(pipe(string(), nonEmpty())),
+    topics: optional(pipe(string(), trim(), nonEmpty())),
     username: optional(string()),
     query: optional(string()),
     orientation: optional(picklist(['landscape', 'portrait', 'squarish'])),
@@ -27,7 +27,7 @@ const randomQuerySchema = pipe(
 const searchQuerySchema = object({
   mode: literal('search'),
   n: toInt(1, 30, 1), // per_page
-  query: optional(pipe(string(), nonEmpty()), 'landscape'),
+  query: optional(pipe(string(), trim(), nonEmpty()), 'landscape'),
   page: toInt(1, 100, 1),
   order_by: optional(picklist(['relevant', 'latest'])),
   orientation: optional(picklist(['landscape', 'portrait', 'squarish'])),
@@ -36,13 +36,27 @@ const searchQuerySchema = object({
   content_filter: optional(picklist(['low', 'high'])),
 });
 
+const topicQuerySchema = object({
+  mode: literal('topic'),
+  topic: optional(pipe(string(), trim(), nonEmpty()), 'wallpapers'),
+  n: toInt(1, 30, 10), // per_page
+  page: toInt(1, 100, 1),
+  orientation: optional(picklist(['landscape', 'portrait', 'squarish'])),
+  order_by: optional(picklist(['latest', 'oldest', 'popular'])),
+});
+
 const listQuerySchema = object({
   mode: literal('list'),
   n: toInt(1, 30, 10), // per_page
   page: toInt(1, 100, 1),
 });
 
-const querySchema = variant('mode', [randomQuerySchema, searchQuerySchema, listQuerySchema]);
+const querySchema = variant('mode', [
+  randomQuerySchema,
+  searchQuerySchema,
+  topicQuerySchema,
+  listQuerySchema,
+]);
 
 export type UnsplashQueryParams = InferOutput<typeof querySchema>;
 

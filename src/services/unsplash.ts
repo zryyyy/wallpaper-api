@@ -58,6 +58,8 @@ export async function getUnsplashWallpapers(
       return await fetchRandomPhotos(params, headers);
     case 'search':
       return await fetchSearchPhotos(params, headers);
+    case 'topic':
+      return await fetchTopicPhotos(params, headers);
     case 'list':
       return await fetchListPhotos(params, headers);
     default: {
@@ -109,6 +111,21 @@ async function fetchSearchPhotos(
 
   const data = await fetchJson<UnsplashSearchResponse>(url, { headers });
   return data.results.map<UnsplashWallpaper>(mapRaw);
+}
+
+async function fetchTopicPhotos(
+  params: Extract<UnsplashQueryParams, { mode: 'topic' }>,
+  headers: HeadersInit,
+): Promise<UnsplashWallpaper[]> {
+  const url = new URL(`topics/${params.topic}/photos`, UNSPLASH_API_URL);
+
+  url.searchParams.set('per_page', params.n.toString());
+  url.searchParams.set('page', params.page.toString());
+  params.orientation && url.searchParams.set('orientation', params.orientation);
+  params.order_by && url.searchParams.set('order_by', params.order_by);
+
+  const data = await fetchJson<UnsplashPhotosResponse>(url, { headers });
+  return data.map<UnsplashWallpaper>(mapRaw);
 }
 
 async function fetchListPhotos(
