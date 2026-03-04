@@ -1,7 +1,7 @@
-import { getBingWallpapers } from '../services/bing';
 import { getPexelsWallpapers } from '../services/pexels';
 import { getUnsplashWallpapers } from '../services/unsplash';
 import { getWallhavenWallpapers } from '../services/wallhaven';
+import { fetchJson } from '../utils/client';
 import { shuffleArray } from '../utils/shuffle';
 
 export interface Wallpaper {
@@ -39,22 +39,35 @@ export default async function updateWallpapers(
   try {
     const fetchTasks: Promise<Wallpaper[]>[] = [
       fetchAndMapWallpapers('bing', async () => {
-        const [bing1, bing2] = await Promise.all([
-          getBingWallpapers({ idx: 0, n: 7 }),
-          getBingWallpapers({ idx: 8, n: 8 }),
-        ]);
-        return [...bing1, ...bing2];
+        const data = await fetchJson<{ date: string; url: string; copyright: string }[]>(
+          'https://raw.githubusercontent.com/zryyyy/bing-wallpaper/refs/heads/master/img/en-SG.json',
+        );
+        return data.map((img) => ({
+          date: img.date,
+          url: img.url,
+          copyright: img.copyright,
+          title: img.copyright.replace(/\s*\(.*\)$/, ''),
+        }));
       }),
 
       fetchAndMapWallpapers('wallhaven', () =>
-        getWallhavenWallpapers({ sorting: 'random', purity: '100', atleast: '2560x1440' }),
+        getWallhavenWallpapers({
+          purity: '100',
+          sorting: 'toplist',
+          topRange: '1M',
+          atleast: '2560x1440',
+          ratios: 'landscape',
+        }),
       ),
     ];
 
     if (env.UNSPLASH_ACCESS_KEY) {
       fetchTasks.push(
         fetchAndMapWallpapers('unsplash', () =>
-          getUnsplashWallpapers({ mode: 'random', n: 15 }, env.UNSPLASH_ACCESS_KEY),
+          getUnsplashWallpapers(
+            { mode: 'random', n: 25, topics: 'wallpapers', orientation: 'landscape' },
+            env.UNSPLASH_ACCESS_KEY,
+          ),
         ),
       );
     }
@@ -62,7 +75,10 @@ export default async function updateWallpapers(
     if (env.PEXELS_API_KEY) {
       fetchTasks.push(
         fetchAndMapWallpapers('pexels', () =>
-          getPexelsWallpapers({ mode: 'curated' }, env.PEXELS_API_KEY),
+          getPexelsWallpapers(
+            { mode: 'search', query: 'nature', orientation: 'landscape', n: 5 },
+            env.PEXELS_API_KEY,
+          ),
         ),
       );
     }
